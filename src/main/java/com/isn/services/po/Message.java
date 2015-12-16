@@ -14,7 +14,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
-import javax.persistence.OneToMany;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -27,7 +28,7 @@ public class Message {
 	private long id;
 	private String title;
 	/*
-	 * MessageµÄoss¶ÔÏóÒýÓÃ
+	 * Messageï¿½ï¿½ossï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	 */
 	private String ref;
 	private Date sendTime;
@@ -120,7 +121,7 @@ public class Message {
 		this.privacyType = privacyType;
 	}
 
-	@OneToOne(  
+	@ManyToOne(  
             targetEntity = com.isn.services.po.User.class,   
             fetch = FetchType.EAGER,   
             cascade = { CascadeType.ALL })  
@@ -134,7 +135,7 @@ public class Message {
 		this.sender = sender;
 	}
 
-	@OneToMany (  
+	@ManyToMany (  
             targetEntity=com.isn.services.po.Friend.class,  
             fetch=FetchType.EAGER,  
             cascade = { CascadeType.ALL })  

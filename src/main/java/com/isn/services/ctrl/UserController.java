@@ -105,9 +105,9 @@ public class UserController {
     	}
     }
 	
-	//主对象在创建create及更新update时，只处理基本属性。
-	//关联的子对象的创建create、更新update以及删除delete由专门的controller提供专门的方法。
-	//主对象针对子对象提供添加add和remove方法
+	//涓诲璞″湪鍒涘缓create鍙婃洿鏂皍pdate鏃讹紝鍙鐞嗗熀鏈睘鎬с��
+	//鍏宠仈鐨勫瓙瀵硅薄鐨勫垱寤篶reate銆佹洿鏂皍pdate浠ュ強鍒犻櫎delete鐢变笓闂ㄧ殑controller鎻愪緵涓撻棬鐨勬柟娉曘��
+	//涓诲璞￠拡瀵瑰瓙瀵硅薄鎻愪緵娣诲姞add鍜宺emove鏂规硶
 	
 	@RequestMapping(method=RequestMethod.PUT,path="",consumes="application/json")
     public void update(@RequestBody User user) {
@@ -200,33 +200,12 @@ public class UserController {
 						f.setEmail(friend.getEmail());
 						f.setMobile(friend.getMobile());
 						f.setTag(friend.getTag());
-						concretizeToUser(f);
 						repoFriend.save(f);
 					}
 				}
 			}
 		}
     }
-	
-	private void concretizeToUser(Friend friend){
-		String mobile = friend.getMobile();
-		if(mobile != null && mobile.trim() != ""){
-			List<User> users = repoUser.findByMobile(mobile);
-			if(users != null && users.size() > 0){
-				friend.setUser(users.get(0));
-				return;
-			}
-		}
-		
-		String email = friend.getEmail();
-		if(email != null && email.trim() != ""){
-			List<User> users = repoUser.findByEmail(email);
-			if(users != null && users.size() > 0){
-				friend.setUser(users.get(0));
-				return;
-			}
-		}
-	}
 	
 	@RequestMapping(method=RequestMethod.DELETE,path="/{userId}/friends/{friendId}")
     public void deleteMyFriend(@PathVariable long userId, @PathVariable long friendId){
@@ -255,6 +234,10 @@ public class UserController {
 	
 	@RequestMapping(method=RequestMethod.GET,path="/{userId}/outmessages", produces="application/json")
     public List<Message> getSendMessages(@PathVariable long userId){
-		return repoMessage.findSendMessages(userId);
+		User user = repoUser.findOne(userId);
+		if(user != null){
+			return user.getOutmessages();
+		}
+		return null;
 	}
 }

@@ -29,7 +29,7 @@ public class User {
 	private Calendar birthday;
 	private String email;
 	private List<Friend> friends;
-	
+	private List<Message> outmessages;
 
 	@Column  
 	@Id  
@@ -99,15 +99,27 @@ public class User {
 
 	@OneToMany ( 
             fetch=FetchType.EAGER, 
-            cascade = { CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REFRESH },
+            cascade = { CascadeType.ALL },
             mappedBy = "owner")  
 	public List<Friend> getFriends() {
 		return friends;
 	}
 
-	@JsonBackReference
+	@JsonBackReference(value="friends")
 	public void setFriends(List<Friend> friends) {
 		this.friends = friends;
 	}
-	
+
+	@OneToMany ( 
+            fetch=FetchType.EAGER, 
+            cascade = { CascadeType.ALL },
+            mappedBy = "sender")  
+	public List<Message> getOutmessages() {
+		return outmessages;
+	}
+
+	@JsonBackReference(value="outmessages")
+	public void setOutmessages(List<Message> outmessages) {
+		this.outmessages = outmessages;
+	}
 }
