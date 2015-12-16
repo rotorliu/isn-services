@@ -29,6 +29,7 @@ public class User {
 	private Calendar birthday;
 	private String email;
 	private List<Friend> friends;
+	
 
 	@Column  
 	@Id  
