@@ -27,9 +27,6 @@ public class Message {
 
 	private long id;
 	private String title;
-	/*
-	 * Message��oss��������
-	 */
 	private String ref;
 	private Date sendTime;
 	private MessageState state;
@@ -41,7 +38,7 @@ public class Message {
 	
 	@Column
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	public long getId() {
 		return id;
 	}
@@ -123,9 +120,7 @@ public class Message {
 
 	@ManyToOne(  
             targetEntity = com.isn.services.po.User.class,   
-            fetch = FetchType.EAGER,   
-            cascade = { CascadeType.ALL })  
-    @Cascade( { org.hibernate.annotations.CascadeType.ALL } )   
+            fetch = FetchType.EAGER)   
 	@JoinColumn(name = "sernder_user_id") 
 	public User getSender() {
 		return sender;
@@ -137,9 +132,7 @@ public class Message {
 
 	@ManyToMany (  
             targetEntity=com.isn.services.po.Friend.class,  
-            fetch=FetchType.EAGER,  
-            cascade = { CascadeType.ALL })  
-    @Cascade( { org.hibernate.annotations.CascadeType.ALL } )   
+            fetch=FetchType.EAGER)    
     @JoinTable(name="isn_message_receiver",   
             joinColumns = @JoinColumn(name = "message_id"),   
             inverseJoinColumns = @JoinColumn(name = "friend_id")) 

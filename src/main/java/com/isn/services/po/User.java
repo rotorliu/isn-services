@@ -3,7 +3,6 @@ package com.isn.services.po;
 import java.util.Calendar;
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -33,7 +32,7 @@ public class User {
 
 	@Column  
 	@Id  
-	@GeneratedValue(strategy = GenerationType.AUTO) 
+	@GeneratedValue(strategy = GenerationType.IDENTITY) 
 	public long getId() {
 		return id;
 	}
@@ -98,8 +97,7 @@ public class User {
 	}
 
 	@OneToMany ( 
-            fetch=FetchType.EAGER, 
-            cascade = { CascadeType.ALL },
+            fetch=FetchType.EAGER,
             mappedBy = "owner")  
 	public List<Friend> getFriends() {
 		return friends;
@@ -112,7 +110,6 @@ public class User {
 
 	@OneToMany ( 
             fetch=FetchType.EAGER, 
-            cascade = { CascadeType.ALL },
             mappedBy = "sender")  
 	public List<Message> getOutmessages() {
 		return outmessages;

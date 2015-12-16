@@ -105,10 +105,6 @@ public class UserController {
     	}
     }
 	
-	//涓诲璞″湪鍒涘缓create鍙婃洿鏂皍pdate鏃讹紝鍙鐞嗗熀鏈睘鎬с��
-	//鍏宠仈鐨勫瓙瀵硅薄鐨勫垱寤篶reate銆佹洿鏂皍pdate浠ュ強鍒犻櫎delete鐢变笓闂ㄧ殑controller鎻愪緵涓撻棬鐨勬柟娉曘��
-	//涓诲璞￠拡瀵瑰瓙瀵硅薄鎻愪緵娣诲姞add鍜宺emove鏂规硶
-	
 	@RequestMapping(method=RequestMethod.PUT,path="",consumes="application/json")
     public void update(@RequestBody User user) {
 		User old = repoUser.findOne(user.getId());
@@ -168,7 +164,7 @@ public class UserController {
 		
 		return null;
 	}
-	
+
 	@RequestMapping(method=RequestMethod.POST,path="/{userId}/friends",consumes="application/json")
     public long createMyFriend(@PathVariable long userId, @RequestBody Friend friend) {
 		User user = repoUser.findOne(userId);
@@ -225,7 +221,6 @@ public class UserController {
 		}
 		
 	}
-	
 	
 	@RequestMapping(method=RequestMethod.GET,path="/{userId}/inmessages", produces="application/json")
     public List<Message> getReceivedMessages(@PathVariable long userId){

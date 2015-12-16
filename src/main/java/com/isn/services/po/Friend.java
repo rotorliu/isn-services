@@ -2,7 +2,6 @@ package com.isn.services.po;
 
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -14,8 +13,6 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-
-import org.hibernate.annotations.Cascade;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
@@ -34,7 +31,7 @@ public class Friend {
 
 	@Column
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	public long getId() {
 		return id;
 	}
@@ -103,9 +100,7 @@ public class Friend {
 
 	@ManyToMany (  
             targetEntity=com.isn.services.po.Message.class,  
-            fetch=FetchType.EAGER,  
-            cascade = { CascadeType.ALL })  
-    @Cascade( { org.hibernate.annotations.CascadeType.ALL } )   
+            fetch=FetchType.EAGER)  
     @JoinTable(name="isn_message_receiver",   
             joinColumns = @JoinColumn(name = "friend_id"),   
             inverseJoinColumns = @JoinColumn(name = "message_id")) 
