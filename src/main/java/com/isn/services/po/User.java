@@ -29,6 +29,7 @@ public class User {
 	private String email;
 	private List<Friend> friends;
 	private List<Message> outmessages;
+	private List<MessageComment> comments;
 
 	@Column  
 	@Id  
@@ -118,5 +119,17 @@ public class User {
 	@JsonBackReference(value="outmessages")
 	public void setOutmessages(List<Message> outmessages) {
 		this.outmessages = outmessages;
+	}
+
+	@OneToMany ( 
+            fetch=FetchType.EAGER, 
+            mappedBy = "commenter")
+	public List<MessageComment> getComments() {
+		return comments;
+	}
+
+	@JsonBackReference(value="comments")
+	public void setComments(List<MessageComment> comments) {
+		this.comments = comments;
 	}
 }

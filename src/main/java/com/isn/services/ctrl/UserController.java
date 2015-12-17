@@ -1,6 +1,5 @@
 package com.isn.services.ctrl;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.isn.services.po.Friend;
 import com.isn.services.po.Message;
+import com.isn.services.po.MessageComment;
 import com.isn.services.po.User;
 import com.isn.services.repo.FriendRepository;
 import com.isn.services.repo.MessageRepository;
@@ -169,9 +169,6 @@ public class UserController {
     public long createMyFriend(@PathVariable long userId, @RequestBody Friend friend) {
 		User user = repoUser.findOne(userId);
 		if(user != null){
-			if(user.getFriends() == null){
-				user.setFriends(new ArrayList<Friend>());
-			}
 			if(friend != null){
 				friend.setOwner(user);
 				repoFriend.save(friend);
@@ -234,5 +231,11 @@ public class UserController {
 			return user.getOutmessages();
 		}
 		return null;
+	}
+	
+	@RequestMapping(method=RequestMethod.GET,path="/{userId}/comments", produces="application/json")
+    public List<MessageComment> getMyComments(@PathVariable long userId){
+		User user = repoUser.findOne(userId);
+		return user.getComments();
 	}
 }

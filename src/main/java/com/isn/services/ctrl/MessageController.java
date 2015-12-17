@@ -10,11 +10,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.isn.services.po.MessageComment;
 import com.isn.services.po.Friend;
 import com.isn.services.po.Message;
 import com.isn.services.po.MessageLock;
 import com.isn.services.po.User;
 import com.isn.services.repo.FriendRepository;
+import com.isn.services.repo.MessageCommentRepository;
 import com.isn.services.repo.MessageLockRepository;
 import com.isn.services.repo.MessageRepository;
 import com.isn.services.repo.UserRepository;
@@ -31,6 +33,8 @@ public class MessageController {
 	private FriendRepository repoFriend;
 	@Autowired
 	private MessageLockRepository repoMessageLock;
+	@Autowired
+	private MessageCommentRepository repoMessageComment;
 	
 	@RequestMapping(method=RequestMethod.GET,path="/{messageId}", produces="application/json")
     public Message get(@PathVariable long messageId){
@@ -77,12 +81,9 @@ public class MessageController {
     public long createMyLock(@PathVariable long messageId, @RequestBody MessageLock lock) {
 		Message message = repoMessage.findOne(messageId);
 		if(message != null){
-			if(message.getLocks() == null){
-				message.setLocks(new ArrayList<MessageLock>());
-			}
 			if(lock != null){
 				lock.setOwner(message);
-				repoMessageLock.save(lock);
+				lock = repoMessageLock.save(lock);
 			}
 			return lock.getId();
 		}
@@ -112,5 +113,50 @@ public class MessageController {
     public List<MessageLock> getMyLocks(@PathVariable long messageId){
 		Message message = repoMessage.findOne(messageId);
 		return message.getLocks();
+	}
+	
+	@RequestMapping(method=RequestMethod.POST,path="/{messageId}/commenters/{commenterUserId}/comments",consumes="application/json")
+    public long createMyComment(@PathVariable long messageId, @PathVariable long commenterUserId, @RequestBody MessageComment comment) {
+		Message message = repoMessage.findOne(messageId);
+		User commenter = repoUser.findOne(commenterUserId);
+		if(message != null && commenter != null){
+			if(comment != null){
+				comment.setOwner(message);
+				comment.setCommenter(commenter);
+				comment = repoMessageComment.save(comment);
+			}
+			return comment.getId();
+		}
+		
+		return 0;
+	}
+	
+	@RequestMapping(method=RequestMethod.DELETE,path="/{messageId}/commenters/{commenterUserId}/comments/{commentId}")
+    public void deleteMyComment(@PathVariable long messageId, @PathVariable long commenterUserId, @PathVariable long commentId){
+		Message message = repoMessage.findOne(messageId);
+		User commenter = repoUser.findOne(commenterUserId);
+		if(message != null && commenter != null){
+			List<MessageComment> comments = message.getComments();
+			if(comments != null){
+				for(int i = 0; i < comments.size(); i++){
+					MessageComment comment = comments.get(i);
+					if(comment != null && comment.getId() == commentId){
+						User uc = comment.getCommenter();
+						if(uc == commenter){
+							comments.remove(i);
+							repoMessageComment.delete(comment);
+							
+						}
+						break;
+					}
+				}
+			}
+		}
+	}
+	
+	@RequestMapping(method=RequestMethod.GET,path="/{messageId}/comments", produces="application/json")
+    public List<MessageComment> getMyComments(@PathVariable long messageId){
+		Message message = repoMessage.findOne(messageId);
+		return message.getComments();
 	}
 }

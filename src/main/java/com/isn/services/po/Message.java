@@ -36,6 +36,7 @@ public class Message {
 	private PrivacyType privacyType;
 	private User sender;
 	private List<Friend> receivers;
+	private List<MessageComment> comments;
 	
 	@Column
 	@Id
@@ -151,5 +152,18 @@ public class Message {
 
 	public void setTag(String tag) {
 		this.tag = tag;
+	}
+
+	@OneToMany(   
+            fetch = FetchType.EAGER,   
+            cascade = { CascadeType.ALL },
+            mappedBy = "owner")
+	public List<MessageComment> getComments() {
+		return comments;
+	}
+
+	@JsonBackReference(value="comments")
+	public void setComments(List<MessageComment> comments) {
+		this.comments = comments;
 	}
 }
