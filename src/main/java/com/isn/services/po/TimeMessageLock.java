@@ -5,10 +5,17 @@ import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 
+import com.fasterxml.jackson.annotation.JsonTypeName;
+
 @Entity
+@JsonTypeName("TimeMessageLock")
 public class TimeMessageLock extends MessageLock {
 
 	private Date freeTime;
+	
+	protected TimeMessageLock(){
+		
+	}
 	
 	public TimeMessageLock(Date freeTime){
 		this.freeTime = freeTime;

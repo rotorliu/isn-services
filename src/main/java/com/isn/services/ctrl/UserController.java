@@ -105,10 +105,6 @@ public class UserController {
     	}
     }
 	
-	//主对象在创建create及更新update时，只处理基本属性。
-	//关联的子对象的创建create、更新update以及删除delete由专门的controller提供专门的方法。
-	//主对象针对子对象提供添加add和remove方法
-	
 	@RequestMapping(method=RequestMethod.PUT,path="",consumes="application/json")
     public void update(@RequestBody User user) {
 		User old = repoUser.findOne(user.getId());
@@ -168,7 +164,7 @@ public class UserController {
 		
 		return null;
 	}
-	
+
 	@RequestMapping(method=RequestMethod.POST,path="/{userId}/friends",consumes="application/json")
     public long createMyFriend(@PathVariable long userId, @RequestBody Friend friend) {
 		User user = repoUser.findOne(userId);
@@ -200,33 +196,12 @@ public class UserController {
 						f.setEmail(friend.getEmail());
 						f.setMobile(friend.getMobile());
 						f.setTag(friend.getTag());
-						concretizeToUser(f);
 						repoFriend.save(f);
 					}
 				}
 			}
 		}
     }
-	
-	private void concretizeToUser(Friend friend){
-		String mobile = friend.getMobile();
-		if(mobile != null && mobile.trim() != ""){
-			List<User> users = repoUser.findByMobile(mobile);
-			if(users != null && users.size() > 0){
-				friend.setUser(users.get(0));
-				return;
-			}
-		}
-		
-		String email = friend.getEmail();
-		if(email != null && email.trim() != ""){
-			List<User> users = repoUser.findByEmail(email);
-			if(users != null && users.size() > 0){
-				friend.setUser(users.get(0));
-				return;
-			}
-		}
-	}
 	
 	@RequestMapping(method=RequestMethod.DELETE,path="/{userId}/friends/{friendId}")
     public void deleteMyFriend(@PathVariable long userId, @PathVariable long friendId){
@@ -247,7 +222,6 @@ public class UserController {
 		
 	}
 	
-	
 	@RequestMapping(method=RequestMethod.GET,path="/{userId}/inmessages", produces="application/json")
     public List<Message> getReceivedMessages(@PathVariable long userId){
 		return repoMessage.findReceivedMessages(userId);
@@ -255,6 +229,10 @@ public class UserController {
 	
 	@RequestMapping(method=RequestMethod.GET,path="/{userId}/outmessages", produces="application/json")
     public List<Message> getSendMessages(@PathVariable long userId){
-		return repoMessage.findSendMessages(userId);
+		User user = repoUser.findOne(userId);
+		if(user != null){
+			return user.getOutmessages();
+		}
+		return null;
 	}
 }

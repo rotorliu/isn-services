@@ -3,7 +3,6 @@ package com.isn.services.po;
 import java.util.Calendar;
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -29,10 +28,11 @@ public class User {
 	private Calendar birthday;
 	private String email;
 	private List<Friend> friends;
+	private List<Message> outmessages;
 
 	@Column  
 	@Id  
-	@GeneratedValue(strategy = GenerationType.AUTO) 
+	@GeneratedValue(strategy = GenerationType.IDENTITY) 
 	public long getId() {
 		return id;
 	}
@@ -97,16 +97,26 @@ public class User {
 	}
 
 	@OneToMany ( 
-            fetch=FetchType.EAGER, 
-            cascade = { CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REFRESH },
+            fetch=FetchType.EAGER,
             mappedBy = "owner")  
 	public List<Friend> getFriends() {
 		return friends;
 	}
 
-	@JsonBackReference
+	@JsonBackReference(value="friends")
 	public void setFriends(List<Friend> friends) {
 		this.friends = friends;
 	}
-	
+
+	@OneToMany ( 
+            fetch=FetchType.EAGER, 
+            mappedBy = "sender")  
+	public List<Message> getOutmessages() {
+		return outmessages;
+	}
+
+	@JsonBackReference(value="outmessages")
+	public void setOutmessages(List<Message> outmessages) {
+		this.outmessages = outmessages;
+	}
 }
