@@ -31,7 +31,7 @@ public class TimeMessageLock extends MessageLock {
 		return false;
 	}
 
-	@Column
+	@Column(nullable=false)
 	public Date getFreeTime() {
 		return freeTime;
 	}

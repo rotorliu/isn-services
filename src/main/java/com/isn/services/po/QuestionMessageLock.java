@@ -35,7 +35,7 @@ public class QuestionMessageLock extends MessageLock {
 		this.answer = answer;
 	}
 
-	@Column
+	@Column(nullable=false)
 	public String getQuestion() {
 		return question;
 	}
@@ -44,7 +44,7 @@ public class QuestionMessageLock extends MessageLock {
 		this.question = question;
 	}
 
-	@Column
+	@Column(nullable=false)
 	public String getCorrectAnswer() {
 		return correctAnswer;
 	}

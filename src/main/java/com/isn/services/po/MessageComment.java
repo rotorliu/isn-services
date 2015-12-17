@@ -35,7 +35,7 @@ public class MessageComment {
 		this.id = id;
 	}
 	
-	@Column
+	@Column(nullable=false)
 	public Date getTime() {
 		return time;
 	}
@@ -44,7 +44,7 @@ public class MessageComment {
 		this.time = time;
 	}
 	
-	@Column
+	@Column(nullable=false)
 	public String getContent() {
 		return content;
 	}

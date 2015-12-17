@@ -49,7 +49,7 @@ public class Message {
 		this.id = id;
 	}
 	
-	@Column
+	@Column(nullable=false)
 	public String getTitle() {
 		return title;
 	}
@@ -58,7 +58,7 @@ public class Message {
 		this.title = title;
 	}
 
-	@Column
+	@Column(nullable=false)
 	public String getRef() {
 		return ref;
 	}
@@ -67,7 +67,7 @@ public class Message {
 		this.ref = ref;
 	}
 
-	@Column
+	@Column(nullable=false)
 	public Date getSendTime() {
 		return sendTime;
 	}
@@ -76,7 +76,7 @@ public class Message {
 		this.sendTime = sendTime;
 	}
 
-	@Column
+	@Column(nullable=false)
 	@Enumerated(EnumType.STRING)
 	public MessageState getState() {
 		return state;
@@ -99,7 +99,7 @@ public class Message {
 		this.locks = locks;
 	}
 
-	@Column
+	@Column(nullable=false)
 	@Enumerated(EnumType.STRING)
 	public ContentType getContentType() {
 		return contentType;
@@ -109,7 +109,7 @@ public class Message {
 		this.contentType = contentType;
 	}
 
-	@Column
+	@Column(nullable=false)
 	@Enumerated(EnumType.STRING)
 	public PrivacyType getPrivacyType() {
 		return privacyType;
@@ -122,7 +122,7 @@ public class Message {
 	@ManyToOne(  
             targetEntity = com.isn.services.po.User.class,   
             fetch = FetchType.EAGER)   
-	@JoinColumn(name = "sernder_user_id") 
+	@JoinColumn(name = "sernder_user_id", nullable=false) 
 	public User getSender() {
 		return sender;
 	}

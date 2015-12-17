@@ -42,7 +42,7 @@ public class User {
 		this.id = id;
 	}
 	
-	@Column
+	@Column(nullable=false)
 	public String getName() {
 		return name;
 	}
@@ -51,7 +51,7 @@ public class User {
 		this.name = name;
 	}
 	
-	@Column
+	@Column(nullable=false)
 	public String getPassword() {
 		return password;
 	}
@@ -60,7 +60,7 @@ public class User {
 		this.password = password;
 	}
 
-	@Column
+	@Column(nullable=false)
 	public String getMobile() {
 		return mobile;
 	}

@@ -40,7 +40,7 @@ public class Friend {
 		this.id = id;
 	}
 
-	@Column
+	@Column(nullable=false)
 	public String getAlias() {
 		return alias;
 	}
