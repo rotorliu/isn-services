@@ -93,7 +93,7 @@ public class Friend {
 		return owner;
 	}
 
-	@JsonBackReference
+	@JsonBackReference(value="owner")
 	public void setOwner(User owner) {
 		this.owner = owner;
 	}

@@ -1,6 +1,8 @@
 package com.isn.services.ctrl;
 
 import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -43,7 +45,7 @@ public class MessageController {
 	
 	@RequestMapping(method=RequestMethod.DELETE,path="/{messageId}")
     public void delete(@PathVariable long messageId){
-		repoMessage.delete(messageId);;
+		repoMessage.delete(messageId);
 	}
 	
 	@RequestMapping(method=RequestMethod.PUT,path="/{messageId}/sender/{senderUserId}")
@@ -71,15 +73,44 @@ public class MessageController {
 		}
     }
 	
-	@RequestMapping(method=RequestMethod.POST,path="/{messageId}/lock",consumes="application/json")
+	@RequestMapping(method=RequestMethod.POST,path="/{messageId}/locks",consumes="application/json")
     public long createMyLock(@PathVariable long messageId, @RequestBody MessageLock lock) {
 		Message message = repoMessage.findOne(messageId);
 		if(message != null){
-			message.setLock(lock);
-			repoMessage.save(message);
-			lock = repoMessageLock.save(lock);
+			if(message.getLocks() == null){
+				message.setLocks(new ArrayList<MessageLock>());
+			}
+			if(lock != null){
+				lock.setOwner(message);
+				repoMessageLock.save(lock);
+			}
 			return lock.getId();
 		}
+		
 		return 0;
+	}
+	
+	@RequestMapping(method=RequestMethod.DELETE,path="/{messageId}/locks/{lockId}")
+    public void deleteMyLock(@PathVariable long messageId, @PathVariable long lockId){
+		Message message = repoMessage.findOne(messageId);
+		if(message != null){
+			List<MessageLock> locks = message.getLocks();
+			if(locks != null){
+				for(int i = 0; i < locks.size(); i++){
+					MessageLock lock = locks.get(i);
+					if(lock != null && lock.getId() == lockId){
+						locks.remove(i);
+						repoMessageLock.delete(lock);
+						break;
+					}
+				}
+			}
+		}
+	}
+	
+	@RequestMapping(method=RequestMethod.GET,path="/{messageId}/locks", produces="application/json")
+    public List<MessageLock> getMyLocks(@PathVariable long messageId){
+		Message message = repoMessage.findOne(messageId);
+		return message.getLocks();
 	}
 }

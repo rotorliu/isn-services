@@ -16,10 +16,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.Cascade;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Entity
 @Table(name = "isn_message")
@@ -31,7 +31,7 @@ public class Message {
 	private String tag;
 	private Date sendTime;
 	private MessageState state;
-	private MessageLock lock;
+	private List<MessageLock> locks;
 	private ContentType contentType;
 	private PrivacyType privacyType;
 	private User sender;
@@ -85,18 +85,17 @@ public class Message {
 		this.state = state;
 	}
 
-	@OneToOne(  
-            targetEntity = com.isn.services.po.MessageLock.class,   
+	@OneToMany(   
             fetch = FetchType.EAGER,   
-            cascade = { CascadeType.ALL })  
-    @Cascade( { org.hibernate.annotations.CascadeType.ALL } )   
-	@JoinColumn(name = "message_lock_id", nullable=true) 
-	public MessageLock getLock() {
-		return lock;
+            cascade = { CascadeType.ALL },
+            mappedBy = "owner")
+	public List<MessageLock> getLocks() {
+		return locks;
 	}
 
-	public void setLock(MessageLock lock) {
-		this.lock = lock;
+	@JsonBackReference(value="locks")
+	public void setLocks(List<MessageLock> locks) {
+		this.locks = locks;
 	}
 
 	@Column

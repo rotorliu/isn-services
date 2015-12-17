@@ -2,13 +2,19 @@ package com.isn.services.po;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import com.fasterxml.jackson.annotation.JsonTypeName;
 
 @Entity
+@JsonTypeName("QuestionMessageLock")
 public class QuestionMessageLock extends MessageLock {
 
 	private String question;
 	private String correctAnswer;
 	private String answer;
+	
+	protected QuestionMessageLock(){
+		
+	}
 	
 	public QuestionMessageLock(String question, String correctAnswer){
 		this.question = question;
