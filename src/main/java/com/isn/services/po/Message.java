@@ -28,6 +28,7 @@ public class Message {
 	private long id;
 	private String title;
 	private String ref;
+	private String tag;
 	private Date sendTime;
 	private MessageState state;
 	private MessageLock lock;
@@ -142,5 +143,14 @@ public class Message {
 
 	public void setReceivers(List<Friend> receivers) {
 		this.receivers = receivers;
+	}
+
+	@Column
+	public String getTag() {
+		return tag;
+	}
+
+	public void setTag(String tag) {
+		this.tag = tag;
 	}
 }
