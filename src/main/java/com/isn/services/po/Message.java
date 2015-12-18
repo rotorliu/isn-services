@@ -30,7 +30,6 @@ public class Message {
 	private String ref;
 	private String tag;
 	private Date sendTime;
-	private MessageState state;
 	private List<MessageLock> locks;
 	private ContentType contentType;
 	private PrivacyType privacyType;
@@ -76,16 +75,6 @@ public class Message {
 		this.sendTime = sendTime;
 	}
 
-	@Column(nullable=false)
-	@Enumerated(EnumType.STRING)
-	public MessageState getState() {
-		return state;
-	}
-
-	public void setState(MessageState state) {
-		this.state = state;
-	}
-
 	@OneToMany(   
             fetch = FetchType.EAGER,   
             cascade = { CascadeType.ALL },
@@ -122,7 +111,7 @@ public class Message {
 	@ManyToOne(  
             targetEntity = com.isn.services.po.User.class,   
             fetch = FetchType.EAGER)   
-	@JoinColumn(name = "sernder_user_id", nullable=false) 
+	@JoinColumn(name = "sernder_user_id") 
 	public User getSender() {
 		return sender;
 	}
