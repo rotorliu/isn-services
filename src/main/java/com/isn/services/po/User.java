@@ -9,7 +9,9 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -30,6 +32,8 @@ public class User {
 	private List<Friend> friends;
 	private List<Message> outmessages;
 	private List<MessageComment> comments;
+	private MessageBox inBox;
+	private MessageBox outBox;
 
 	@Column  
 	@Id  
@@ -131,5 +135,31 @@ public class User {
 	@JsonBackReference(value="comments")
 	public void setComments(List<MessageComment> comments) {
 		this.comments = comments;
+	}
+
+	@OneToOne(
+			targetEntity=com.isn.services.po.MessageBox.class, 
+			fetch=FetchType.EAGER)
+	@JoinColumn(name="message_inbox_id")
+	public MessageBox getInBox() {
+		return inBox;
+	}
+
+	@JsonBackReference(value="inBox")
+	public void setInBox(MessageBox inBox) {
+		this.inBox = inBox;
+	}
+
+	@OneToOne(
+			targetEntity=com.isn.services.po.MessageBox.class, 
+			fetch=FetchType.EAGER)
+	@JoinColumn(name="message_outbox_id")
+	public MessageBox getOutBox() {
+		return outBox;
+	}
+
+	@JsonBackReference(value="outBox")
+	public void setOutBox(MessageBox outBox) {
+		this.outBox = outBox;
 	}
 }

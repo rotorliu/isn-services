@@ -15,9 +15,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.isn.services.po.Friend;
 import com.isn.services.po.Message;
+import com.isn.services.po.MessageBox;
 import com.isn.services.po.MessageComment;
 import com.isn.services.po.User;
 import com.isn.services.repo.FriendRepository;
+import com.isn.services.repo.MessageBoxRepository;
 import com.isn.services.repo.MessageRepository;
 import com.isn.services.repo.UserRepository;
 
@@ -33,6 +35,8 @@ public class UserController {
 	private FriendRepository repoFriend;
 	@Autowired
 	private MessageRepository repoMessage;
+	@Autowired
+	private MessageBoxRepository repoMessageBox;
 	
 	@RequestMapping(method=RequestMethod.DELETE,path="/{userid}")
     public void delete(@PathVariable long userid) {
@@ -231,6 +235,56 @@ public class UserController {
 			return user.getOutmessages();
 		}
 		return null;
+	}
+	
+	@RequestMapping(method=RequestMethod.GET,path="/{userId}/inbox", produces="application/json")
+    public List<Message> getInBoxMessages(@PathVariable long userId){
+		User user = repoUser.findOne(userId);
+		if(user != null){
+			MessageBox mInBox = user.getInBox();
+			if(mInBox != null){
+				return mInBox.getMessages();
+			}
+		}
+		return null;
+	}
+	
+	@RequestMapping(method=RequestMethod.GET,path="/{userId}/outbox", produces="application/json")
+    public List<Message> getOutBoxMessages(@PathVariable long userId){
+		User user = repoUser.findOne(userId);
+		if(user != null){
+			MessageBox mOutBox = user.getOutBox();
+			if(mOutBox != null){
+				return mOutBox.getMessages();
+			}
+		}
+		return null;
+	}
+	
+	@RequestMapping(method=RequestMethod.DELETE,path="/{userId}/inbox/{messageId}")
+	public void removeMessageFromMyInBox(@PathVariable long userId, @PathVariable long messageId){
+		User user = repoUser.findOne(userId);
+		if(user != null){
+			MessageBox mInBox = user.getInBox();
+			if(mInBox != null){
+				Message message = repoMessage.findOne(messageId);
+				mInBox.getMessages().remove(message);
+				repoMessageBox.save(mInBox);
+			}
+		}
+	}
+	
+	@RequestMapping(method=RequestMethod.DELETE,path="/{userId}/outbox/{messageId}")
+	public void removeMessageFromMyOutBox(@PathVariable long userId, @PathVariable long messageId){
+		User user = repoUser.findOne(userId);
+		if(user != null){
+			MessageBox mOutBox = user.getOutBox();
+			if(mOutBox != null){
+				Message message = repoMessage.findOne(messageId);
+				mOutBox.getMessages().remove(message);
+				repoMessageBox.save(mOutBox);
+			}
+		}
 	}
 	
 	@RequestMapping(method=RequestMethod.GET,path="/{userId}/comments", produces="application/json")

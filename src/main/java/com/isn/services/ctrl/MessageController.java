@@ -13,9 +13,11 @@ import org.springframework.web.bind.annotation.RestController;
 import com.isn.services.po.MessageComment;
 import com.isn.services.po.Friend;
 import com.isn.services.po.Message;
+import com.isn.services.po.MessageBox;
 import com.isn.services.po.MessageLock;
 import com.isn.services.po.User;
 import com.isn.services.repo.FriendRepository;
+import com.isn.services.repo.MessageBoxRepository;
 import com.isn.services.repo.MessageCommentRepository;
 import com.isn.services.repo.MessageLockRepository;
 import com.isn.services.repo.MessageRepository;
@@ -35,6 +37,8 @@ public class MessageController {
 	private MessageLockRepository repoMessageLock;
 	@Autowired
 	private MessageCommentRepository repoMessageComment;
+	@Autowired
+	private MessageBoxRepository repoMessageBox;
 	
 	@RequestMapping(method=RequestMethod.GET,path="/{messageId}", produces="application/json")
     public Message get(@PathVariable long messageId){
@@ -55,10 +59,21 @@ public class MessageController {
 	@RequestMapping(method=RequestMethod.PUT,path="/{messageId}/sender/{senderUserId}")
 	public void setSender(@PathVariable long messageId, @PathVariable long senderUserId){
 		Message message = repoMessage.findOne(messageId);
-		if(message != null){
+		if(message != null && message.getSender() == null){
 			User sender = repoUser.findOne(senderUserId);
-			message.setSender(sender);
-			repoMessage.save(message);
+			if(sender != null){
+				message.setSender(sender);
+				repoMessage.save(message);
+				
+				MessageBox mOutBox = sender.getOutBox();
+				if(sender.getOutBox() == null){
+					mOutBox = new MessageBox();
+					sender.setOutBox(mOutBox);
+				}
+				mOutBox.getMessages().add(message);
+				repoMessageBox.save(mOutBox);
+				repoUser.save(sender);
+			}
 		}
 	}
 	
@@ -71,11 +86,34 @@ public class MessageController {
 				if(message.getReceivers() == null){
 					message.setReceivers(new ArrayList<Friend>());
 				}
-				message.getReceivers().add(friend);
-				repoMessage.save(message);
+				
+				if(!message.getReceivers().contains(friend)){
+					message.getReceivers().add(friend);
+					repoMessage.save(message);
+					
+					User user = concretize(friend);
+					if(user != null){
+						MessageBox mInBox = user.getInBox();
+						if(mInBox == null){
+							mInBox = new MessageBox();
+							user.setInBox(mInBox);
+						}
+						mInBox.getMessages().add(message);
+						repoMessageBox.save(mInBox);
+						repoUser.save(user);
+					}
+				}
 			}
 		}
     }
+	
+	private User concretize(Friend friend){
+		List<User> users = repoFriend.concretize(friend.getMobile(), friend.getEmail());
+		if(users != null && users.size() > 0){
+			return users.get(0);
+		}
+		return null;
+	}
 	
 	@RequestMapping(method=RequestMethod.POST,path="/{messageId}/locks",consumes="application/json")
     public long createMyLock(@PathVariable long messageId, @RequestBody MessageLock lock) {
