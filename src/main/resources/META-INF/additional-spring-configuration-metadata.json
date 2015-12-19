@@ -1,0 +1,44 @@
+{
+  "groups": [{
+    "name": "cloopen",
+    "type": "com.isn.services.conf.CloopenSettings",
+    "sourceType": "com.isn.services.conf.CloopenSettings"
+  }],
+  "properties": [
+    {
+      "name": "cloopen.rest-url",
+      "type": "java.lang.String",
+      "description": "Cloopen SMS service rest URL"
+    },
+    {
+      "name": "cloopen.rest-port",
+      "type": "java.lang.String",
+      "description": "Cloopen SMS service rest port"
+    },
+    {
+      "name": "cloopen.account-sid",
+      "type": "java.lang.String",
+      "description": "Cloopen developer account sid'"
+    },
+    {
+      "name": "cloopen.auth-token",
+      "type": "java.lang.String",
+      "description": "Cloopen developer auth token'"
+    },
+    {
+      "name": "cloopen.app-id",
+      "type": "java.lang.String",
+      "description": "app id that Cloopen generate for the app"
+    },
+    {
+      "name": "cloopen.voice-play-times",
+      "type": "java.lang.String",
+      "description": "Cloopen voice verification code playing times"
+    },
+    {
+      "name": "cloopen.lang",
+      "type": "java.lang.String",
+      "description": "Cloopen voice verification code playing language"
+    }
+  ]
+}

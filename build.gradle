@@ -26,14 +26,16 @@ repositories {
     mavenCentral()
 }
 
-
 dependencies {
     compile('org.springframework.boot:spring-boot-starter-data-jpa')
     compile('org.springframework.boot:spring-boot-starter-data-rest')
     runtime("org.postgresql:postgresql:9.4-1206-jdbc42")
     testCompile('org.springframework.boot:spring-boot-starter-test') 
     compile files('lib/CCP_REST_SDK_JAVA_v2.7r.jar')
+	optional ('org.springframework.boot:spring-boot-configuration-processor')
 }
+
+compileJava.dependsOn(processResources)
 
 
 eclipse {

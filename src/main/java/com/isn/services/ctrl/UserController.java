@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cloopen.rest.sdk.CCPRestSDK;
+import com.isn.services.conf.CloopenSettings;
 import com.isn.services.po.Friend;
 import com.isn.services.po.Message;
 import com.isn.services.po.MessageBox;
@@ -39,6 +40,8 @@ public class UserController {
 	private MessageBoxRepository repoMessageBox;
 	@Autowired
 	private VerificationCodeRepository repoVerificationCode;
+	@Autowired  
+	CloopenSettings cloopenSettings;  
 	
 	@RequestMapping(method=RequestMethod.DELETE,path="/{userid}")
     public void delete(@PathVariable long userid) {
@@ -139,10 +142,10 @@ public class UserController {
 		HashMap<String, Object> result = null;
 
 		CCPRestSDK restAPI = new CCPRestSDK();
-		restAPI.init("sandboxapp.cloopen.com", "8883");
-		restAPI.setAccount("aaf98f8951af2ba80151b877deef2097", "87b5c1af5b954f79b409970729a9d12c");
-		restAPI.setAppId("aaf98f8951af2ba80151b885304920e0");
-		result = restAPI.voiceVerify(code, mobile,"","2","", "zh", "");
+		restAPI.init(cloopenSettings.getRestUrl(), cloopenSettings.getRestPort());
+		restAPI.setAccount(cloopenSettings.getAccountSid(), cloopenSettings.getAuthToken());
+		restAPI.setAppId(cloopenSettings.getAppId());
+		result = restAPI.voiceVerify(code, mobile,"",cloopenSettings.getVoicePlayTimes(),"", cloopenSettings.getLang(), "");
 
 		return "000000".equals(result.get("statusCode"));
 
