@@ -108,7 +108,7 @@ public class MessageController {
     }
 	
 	private User concretize(Friend friend){
-		List<User> users = repoFriend.concretize(friend.getMobile(), friend.getEmail());
+		List<User> users = repoFriend.concretize(friend.getMobile());
 		if(users != null && users.size() > 0){
 			return users.get(0);
 		}
