@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,6 +24,7 @@ import com.isn.services.po.User;
 import com.isn.services.po.VerificationCode;
 import com.isn.services.repo.FriendRepository;
 import com.isn.services.repo.MessageBoxRepository;
+import com.isn.services.repo.MessageCommentRepository;
 import com.isn.services.repo.MessageRepository;
 import com.isn.services.repo.UserRepository;
 import com.isn.services.repo.VerificationCodeRepository;
@@ -40,6 +43,8 @@ public class UserController {
 	private MessageBoxRepository repoMessageBox;
 	@Autowired
 	private VerificationCodeRepository repoVerificationCode;
+	@Autowired
+	private MessageCommentRepository repoMessageComment;
 	@Autowired  
 	CloopenSettings cloopenSettings;  
 	
@@ -166,9 +171,10 @@ public class UserController {
 	}
 	
 	@RequestMapping(method=RequestMethod.GET,path="/{userId}/friends", produces="application/json")
-    public List<Friend> getMyFriends(@PathVariable long userId){
-		User user = repoUser.findOne(userId);
-		return user.getFriends();
+    public Page<Friend> getMyFriends(@PathVariable long userId, Pageable pageRequest){
+//		User user = repoUser.findOne(userId);
+//		return user.getFriends();
+		return repoFriend.findMyFriendsOrderByAliasAsc(userId, pageRequest);
 	}
 	
 	@RequestMapping(method=RequestMethod.GET,path="/{userId}/friends/{friendId}", produces="application/json")
@@ -247,44 +253,47 @@ public class UserController {
 	 * Get all messages that the user receive, even though the message was removed from message inbox
 	 */
 	@RequestMapping(method=RequestMethod.GET,path="/{userId}/inmessages", produces="application/json")
-    public List<Message> getReceivedMessages(@PathVariable long userId){
-		return repoMessage.findReceivedMessages(userId);
+    public Page<Message> getMyReceivedMessages(@PathVariable long userId, Pageable pageRequest){
+		return repoMessage.findMyReceivedMessages(userId, pageRequest);
 	}
 	
 	/*
 	 * Get all messages that the user send, even though the message was removed from message outbox
 	 */
 	@RequestMapping(method=RequestMethod.GET,path="/{userId}/outmessages", produces="application/json")
-    public List<Message> getSendMessages(@PathVariable long userId){
-		User user = repoUser.findOne(userId);
-		if(user != null){
-			return user.getOutmessages();
-		}
-		return null;
+    public Page<Message> getMySendMessages(@PathVariable long userId, Pageable pageRequest){
+//		User user = repoUser.findOne(userId);
+//		if(user != null){
+//			return user.getOutmessages();
+//		}
+//		return null;
+		return repoMessage.findMySendMessages(userId, pageRequest);
 	}
 	
 	@RequestMapping(method=RequestMethod.GET,path="/{userId}/inbox", produces="application/json")
-    public List<Message> getInBoxMessages(@PathVariable long userId){
-		User user = repoUser.findOne(userId);
-		if(user != null){
-			MessageBox mInBox = user.getInBox();
-			if(mInBox != null){
-				return mInBox.getMessages();
-			}
-		}
-		return null;
+    public Page<Message> getMyInBoxMessages(@PathVariable long userId, Pageable pageRequest){
+//		User user = repoUser.findOne(userId);
+//		if(user != null){
+//			MessageBox mInBox = user.getInBox();
+//			if(mInBox != null){
+//				return mInBox.getMessages();
+//			}
+//		}
+//		return null;
+		return repoMessage.findMyInBoxMessages(userId, pageRequest);
 	}
 	
 	@RequestMapping(method=RequestMethod.GET,path="/{userId}/outbox", produces="application/json")
-    public List<Message> getOutBoxMessages(@PathVariable long userId){
-		User user = repoUser.findOne(userId);
-		if(user != null){
-			MessageBox mOutBox = user.getOutBox();
-			if(mOutBox != null){
-				return mOutBox.getMessages();
-			}
-		}
-		return null;
+    public Page<Message> getMyOutBoxMessages(@PathVariable long userId, Pageable pageRequest){
+//		User user = repoUser.findOne(userId);
+//		if(user != null){
+//			MessageBox mOutBox = user.getOutBox();
+//			if(mOutBox != null){
+//				return mOutBox.getMessages();
+//			}
+//		}
+//		return null;
+		return repoMessage.findMyOutBoxMessages(userId, pageRequest);
 	}
 	
 	@RequestMapping(method=RequestMethod.DELETE,path="/{userId}/inbox/{messageId}")
@@ -314,8 +323,9 @@ public class UserController {
 	}
 	
 	@RequestMapping(method=RequestMethod.GET,path="/{userId}/comments", produces="application/json")
-    public List<MessageComment> getMyComments(@PathVariable long userId){
-		User user = repoUser.findOne(userId);
-		return user.getComments();
+    public Page<MessageComment> getMyComments(@PathVariable long userId, Pageable pageRequest){
+//		User user = repoUser.findOne(userId);
+//		return user.getComments();
+		return repoMessageComment.findUserCommentsOrderByTimeDesc(userId, pageRequest);
 	}
 }
