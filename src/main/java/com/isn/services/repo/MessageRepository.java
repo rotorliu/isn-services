@@ -10,6 +10,6 @@ import com.isn.services.po.Message;
 //@RepositoryRestResource(collectionResourceRel = "message", path = "message")
 public interface MessageRepository extends PagingAndSortingRepository<Message, Long> {
 
-	@Query("SELECT m from Message m, User u join m.receivers r WHERE r.mobile = u.mobile or r.email = u.email and u.id = ?1")
+	@Query("SELECT m from Message m, User u join m.receivers r WHERE r.mobile = u.mobile and u.id = ?1")
 	List<Message> findReceivedMessages(@Param("userId") long userId);
 }
