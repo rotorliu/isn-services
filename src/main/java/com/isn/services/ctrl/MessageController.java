@@ -108,11 +108,7 @@ public class MessageController {
     }
 	
 	private User concretize(Friend friend){
-		List<User> users = repoFriend.concretize(friend.getMobile());
-		if(users != null && users.size() > 0){
-			return users.get(0);
-		}
-		return null;
+		return repoUser.findByMobile(friend.getMobile());
 	}
 	
 	@RequestMapping(method=RequestMethod.POST,path="/{messageId}/locks",consumes="application/json")

@@ -2,10 +2,9 @@ package com.isn.services.ctrl;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,22 +12,23 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cloopen.rest.sdk.CCPRestSDK;
 import com.isn.services.po.Friend;
 import com.isn.services.po.Message;
 import com.isn.services.po.MessageBox;
 import com.isn.services.po.MessageComment;
 import com.isn.services.po.User;
+import com.isn.services.po.VerificationCode;
 import com.isn.services.repo.FriendRepository;
 import com.isn.services.repo.MessageBoxRepository;
 import com.isn.services.repo.MessageRepository;
 import com.isn.services.repo.UserRepository;
+import com.isn.services.repo.VerificationCodeRepository;
 
 @RestController
 @RequestMapping("/users")
 public class UserController {
 	
-	private final static Map<String, String> VERIFICATION_CODES = new HashMap<String, String>();
-
 	@Autowired
 	private UserRepository repoUser;
 	@Autowired
@@ -37,6 +37,8 @@ public class UserController {
 	private MessageRepository repoMessage;
 	@Autowired
 	private MessageBoxRepository repoMessageBox;
+	@Autowired
+	private VerificationCodeRepository repoVerificationCode;
 	
 	@RequestMapping(method=RequestMethod.DELETE,path="/{userid}")
     public void delete(@PathVariable long userid) {
@@ -48,12 +50,13 @@ public class UserController {
 		return repoUser.findOne(userid);
     }
 	
+	@Transactional
 	@RequestMapping(method=RequestMethod.POST,path="/register" ,produces="application/json")
     public long register(@RequestParam(value="mobile") String mobile, 
     		@RequestParam(value="name") String name, 
     		@RequestParam(value="password") String password, 
     		@RequestParam(value="verificationCode") String verificationCode) {
-		if(repoUser.findByMobile(mobile).size() > 0){
+		if(repoUser.findByMobile(mobile) != null){
 			return -1;//user exist
 		}
 		else{
@@ -72,22 +75,17 @@ public class UserController {
     }
 	
 	private boolean check(String mobile ,String verificationCode){
-		return true;
-//		String code = VERIFICATIONCODES.get(mobile);
-//		if(code != null && code.equals(verificationCode)){
-//			VERIFICATIONCODES.remove(mobile);
-//			return true;
-//		}
-//		return false;
+		VerificationCode vcode = repoVerificationCode.findByMobile(mobile);
+		if(vcode != null && vcode.getCode().equals(verificationCode)){
+			repoVerificationCode.deleteByMobile(mobile);
+			return true;
+		}
+		return false;
 	}
 	
 	@RequestMapping(method=RequestMethod.GET,path="/getUserByMobile",produces="application/json")
     public User getUserByMobile(@RequestParam(value="mobile") String mobile) {
-    	List<User> users = repoUser.findByMobile(mobile);
-    	if(users.size() > 0){
-    		return users.get(0);
-    	}
-    	return null;
+    	return repoUser.findByMobile(mobile);
     }
 	
 	@RequestMapping(method=RequestMethod.GET,path="/login",produces="application/json")
@@ -138,11 +136,23 @@ public class UserController {
 	}
 	
 	private boolean sendToMobile(String mobile, String code){
-		return true;
+		HashMap<String, Object> result = null;
+
+		CCPRestSDK restAPI = new CCPRestSDK();
+		restAPI.init("sandboxapp.cloopen.com", "8883");
+		restAPI.setAccount("aaf98f8951af2ba80151b877deef2097", "87b5c1af5b954f79b409970729a9d12c");
+		restAPI.setAppId("aaf98f8951af2ba80151b885304920e0");
+		result = restAPI.voiceVerify(code, mobile,"","2","", "zh", "");
+
+		return "000000".equals(result.get("statusCode"));
+
 	}
 	
 	private void registerVerificationCode(String mobile, String code){
-		VERIFICATION_CODES.put(mobile, code);
+		VerificationCode vcode = new VerificationCode();
+		vcode.setMobile(mobile);
+		vcode.setCode(code);
+		repoVerificationCode.save(vcode);
 	}
 	
 	@RequestMapping(method=RequestMethod.GET,path="/{userId}/friends", produces="application/json")
@@ -223,11 +233,17 @@ public class UserController {
 		
 	}
 	
+	/*
+	 * Get all messages that the user receive, even though the message was removed from message inbox
+	 */
 	@RequestMapping(method=RequestMethod.GET,path="/{userId}/inmessages", produces="application/json")
     public List<Message> getReceivedMessages(@PathVariable long userId){
 		return repoMessage.findReceivedMessages(userId);
 	}
 	
+	/*
+	 * Get all messages that the user send, even though the message was removed from message outbox
+	 */
 	@RequestMapping(method=RequestMethod.GET,path="/{userId}/outmessages", produces="application/json")
     public List<Message> getSendMessages(@PathVariable long userId){
 		User user = repoUser.findOne(userId);
