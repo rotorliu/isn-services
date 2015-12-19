@@ -8,12 +8,14 @@
     {
       "name": "cloopen.rest-url",
       "type": "java.lang.String",
-      "description": "Cloopen SMS service rest URL"
+      "description": "Cloopen verification code service rest URL",
+      "defaultValue": "sandboxapp.cloopen.com"
     },
     {
       "name": "cloopen.rest-port",
       "type": "java.lang.String",
-      "description": "Cloopen SMS service rest port"
+      "description": "Cloopen verification code service rest port",
+      "defaultValue": "8883"
     },
     {
       "name": "cloopen.account-sid",
@@ -33,12 +35,26 @@
     {
       "name": "cloopen.voice-play-times",
       "type": "java.lang.String",
-      "description": "Cloopen voice verification code playing times"
+      "description": "Cloopen voice verification code playing times",
+      "defaultValue": "2"
     },
     {
       "name": "cloopen.lang",
       "type": "java.lang.String",
-      "description": "Cloopen voice verification code playing language"
+      "description": "Cloopen voice verification code playing language",
+      "defaultValue": "zh"
+    },
+    {
+      "name": "cloopen.send-type",
+      "type": "com.isn.services.conf.CloopenSettings.SendType",
+      "description": "Cloopen verification code send type",
+      "defaultValue": "Voice"
+    },
+    {
+      "name": "cloopen.sms-template-id",
+      "type": "java.lang.String",
+      "description": "Cloopen verification code SMS template id",
+      "defaultValue": "1"
     }
   ]
 }

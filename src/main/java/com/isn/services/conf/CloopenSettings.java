@@ -5,6 +5,11 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "cloopen")  
 public class CloopenSettings {
 
+	public enum SendType{
+		SMS,
+		Voice
+	}
+	
 	private String restUrl;
 	private String restPort;
 	private String accountSid;
@@ -12,6 +17,8 @@ public class CloopenSettings {
 	private String appId;
 	private String voicePlayTimes;
 	private String lang;
+	private SendType sendType;
+	private String smsTemplateId;
 	
 	public String getRestUrl() {
 		return restUrl;
@@ -67,6 +74,22 @@ public class CloopenSettings {
 
 	public void setLang(String lang) {
 		this.lang = lang;
+	}
+
+	public SendType getSendType() {
+		return sendType;
+	}
+
+	public void setSendType(SendType sendType) {
+		this.sendType = sendType;
+	}
+
+	public String getSMSTemplateId() {
+		return smsTemplateId;
+	}
+
+	public void setSMSTemplateId(String smsTemplateId) {
+		this.smsTemplateId = smsTemplateId;
 	}
 	
 }

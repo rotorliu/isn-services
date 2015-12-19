@@ -145,7 +145,14 @@ public class UserController {
 		restAPI.init(cloopenSettings.getRestUrl(), cloopenSettings.getRestPort());
 		restAPI.setAccount(cloopenSettings.getAccountSid(), cloopenSettings.getAuthToken());
 		restAPI.setAppId(cloopenSettings.getAppId());
-		result = restAPI.voiceVerify(code, mobile,"",cloopenSettings.getVoicePlayTimes(),"", cloopenSettings.getLang(), "");
+		switch(cloopenSettings.getSendType()){
+			case SMS:
+				result = restAPI.sendTemplateSMS(mobile, cloopenSettings.getSMSTemplateId() ,new String[]{code});
+				break;
+			case Voice:
+				result = restAPI.voiceVerify(code, mobile,"",cloopenSettings.getVoicePlayTimes(),"", cloopenSettings.getLang(), "");
+				break;
+		}
 
 		return "000000".equals(result.get("statusCode"));
 
