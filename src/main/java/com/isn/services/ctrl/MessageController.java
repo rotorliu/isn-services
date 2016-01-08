@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.isn.services.po.MessageComment;
 import com.isn.services.po.Friend;
+import com.isn.services.po.IdResult;
 import com.isn.services.po.Message;
 import com.isn.services.po.MessageBox;
 import com.isn.services.po.MessageLock;
@@ -48,9 +49,9 @@ public class MessageController {
 	}
 	
 	@RequestMapping(method=RequestMethod.POST,path="",consumes="application/json")
-    public long create(@RequestBody Message message){
+    public IdResult create(@RequestBody Message message){
 		message = repoMessage.save(message);
-		return message.getId();
+		return new IdResult(message.getId());
     }
 	
 	@RequestMapping(method=RequestMethod.DELETE,path="/{messageId}")
@@ -114,17 +115,17 @@ public class MessageController {
 	}
 	
 	@RequestMapping(method=RequestMethod.POST,path="/{messageId}/locks",consumes="application/json")
-    public long createMyLock(@PathVariable long messageId, @RequestBody MessageLock lock) {
+    public IdResult createMyLock(@PathVariable long messageId, @RequestBody MessageLock lock) {
 		Message message = repoMessage.findOne(messageId);
 		if(message != null){
 			if(lock != null){
 				lock.setOwner(message);
 				lock = repoMessageLock.save(lock);
 			}
-			return lock.getId();
+			return new IdResult(lock.getId());
 		}
 		
-		return 0;
+		return new IdResult(0);
 	}
 	
 	@RequestMapping(method=RequestMethod.DELETE,path="/{messageId}/locks/{lockId}")
@@ -152,7 +153,7 @@ public class MessageController {
 	}
 	
 	@RequestMapping(method=RequestMethod.POST,path="/{messageId}/commenters/{commenterUserId}/comments",consumes="application/json")
-    public long createMyComment(@PathVariable long messageId, @PathVariable long commenterUserId, @RequestBody MessageComment comment) {
+    public IdResult createMyComment(@PathVariable long messageId, @PathVariable long commenterUserId, @RequestBody MessageComment comment) {
 		Message message = repoMessage.findOne(messageId);
 		User commenter = repoUser.findOne(commenterUserId);
 		if(message != null && commenter != null){
@@ -161,10 +162,10 @@ public class MessageController {
 				comment.setCommenter(commenter);
 				comment = repoMessageComment.save(comment);
 			}
-			return comment.getId();
+			return new IdResult(comment.getId());
 		}
 		
-		return 0;
+		return new IdResult(0);
 	}
 	
 	@RequestMapping(method=RequestMethod.DELETE,path="/{messageId}/commenters/{commenterUserId}/comments/{commentId}")

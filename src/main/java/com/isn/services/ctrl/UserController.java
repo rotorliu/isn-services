@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.cloopen.rest.sdk.CCPRestSDK;
 import com.isn.services.conf.CloopenSettings;
 import com.isn.services.po.Friend;
+import com.isn.services.po.IdResult;
 import com.isn.services.po.Message;
 import com.isn.services.po.MessageBox;
 import com.isn.services.po.MessageComment;
@@ -60,12 +61,12 @@ public class UserController {
 	
 	@Transactional
 	@RequestMapping(method=RequestMethod.POST,path="/register" ,produces="application/json")
-    public long register(@RequestParam(value="mobile") String mobile, 
+    public IdResult register(@RequestParam(value="mobile") String mobile, 
     		@RequestParam(value="name") String name, 
     		@RequestParam(value="password") String password, 
     		@RequestParam(value="verificationCode") String verificationCode) {
 		if(repoUser.findByMobile(mobile) != null){
-			return -1;//user exist
+			return new IdResult(-1);//user exist
 		}
 		else{
 			if(check(mobile, verificationCode)){
@@ -74,10 +75,10 @@ public class UserController {
 				user.setPassword(password);
 				user.setName(name);
 				user = repoUser.save(user);
-				return user.getId();
+				return new IdResult(user.getId());
 			}
 			else{
-				return -2;//verification code error;
+				return new IdResult(-2);//verification code error;
 			}
 		}
     }
@@ -97,20 +98,20 @@ public class UserController {
     }
 	
 	@RequestMapping(method=RequestMethod.GET,path="/login",produces="application/json")
-    public long login(@RequestParam(value="mobile") String mobile,
+    public IdResult login(@RequestParam(value="mobile") String mobile,
     		@RequestParam(value="password") String password) {
     	User user = getUserByMobile(mobile);
     	if(user == null){
-    		return -1;//user does not exist.
+    		return new IdResult(-1);//user does not exist.
     	}
     	else{
     		String user_password = user.getPassword();
 	    	if(user_password != null && password != null &&
 	    			!user_password.trim().equals(password.trim())){
-	    		return -2;//password error.
+	    		return new IdResult(-2);//password error.
 	    	}
 	    	else{
-	    		return user.getId();
+	    		return new IdResult(user.getId());
 	    	}
     	}
     }
@@ -196,17 +197,17 @@ public class UserController {
 	}
 
 	@RequestMapping(method=RequestMethod.POST,path="/{userId}/friends",consumes="application/json")
-    public long createMyFriend(@PathVariable long userId, @RequestBody Friend friend) {
+    public IdResult createMyFriend(@PathVariable long userId, @RequestBody Friend friend) {
 		User user = repoUser.findOne(userId);
 		if(user != null){
 			if(friend != null){
 				friend.setOwner(user);
 				repoFriend.save(friend);
 			}
-			return friend.getId();
+			return new IdResult(friend.getId());
 		}
 		
-		return 0;
+		return new IdResult(0);
     }
 	
 	@RequestMapping(method=RequestMethod.PUT,path="/{userId}/friends",consumes="application/json")
