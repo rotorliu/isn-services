@@ -1,6 +1,6 @@
 package com.isn.services.po;
 
-import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -27,7 +27,7 @@ public class User {
 	private String password;
 	private String mobile;
 	private Gender gender;
-	private Calendar birthday;
+	private Date birthday;
 	private String email;
 	private List<Friend> friends;
 	private List<Message> outmessages;
@@ -84,11 +84,11 @@ public class User {
 
 	@Column 
 	@Temporal(TemporalType.DATE)  
-	public Calendar getBirthday() {
+	public Date getBirthday() {
 		return birthday;
 	}
 
-	public void setBirthday(Calendar birthday) {
+	public void setBirthday(Date birthday) {
 		this.birthday = birthday;
 	}
 

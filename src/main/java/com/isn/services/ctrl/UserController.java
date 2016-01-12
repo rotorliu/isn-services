@@ -49,14 +49,14 @@ public class UserController {
 	@Autowired  
 	CloopenSettings cloopenSettings;  
 	
-	@RequestMapping(method=RequestMethod.DELETE,path="/{userid}")
-    public void delete(@PathVariable long userid) {
-		repoUser.delete(userid);
+	@RequestMapping(method=RequestMethod.DELETE,path="/{userId}")
+    public void delete(@PathVariable long userId) {
+		repoUser.delete(userId);
     }
 	
-	@RequestMapping(method=RequestMethod.GET,path="/{userid}",produces="application/json")
-    public User get(@PathVariable long userid) {
-		return repoUser.findOne(userid);
+	@RequestMapping(method=RequestMethod.GET,path="/{userId}",produces="application/json")
+    public User get(@PathVariable long userId) {
+		return repoUser.findOne(userId);
     }
 	
 	@Transactional
